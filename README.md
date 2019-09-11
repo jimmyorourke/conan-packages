@@ -1,7 +1,7 @@
 # conan-packages
 Recipes for Conan packages.
 
-[Conan](https://conan.io/) is a package manager for C and C++.
+[Conan](https://conan.io/) is a package manager for C and C++. Packages can be third party libraries (as source or pre-built binaries), dev tools, etc.
 
  
 ## Building and packaging
