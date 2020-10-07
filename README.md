@@ -3,6 +3,7 @@ Recipes for Conan packages.
 
 [Conan](https://conan.io/) is a package manager for C and C++. Packages can be third party libraries (as source or pre-built binaries), dev tools, etc.
 
+ Update 2020: The Conan team has aggregated a large number of the recipes from community packages and those from Bincrafters and Bintray to https://github.com/conan-io/conan-center-index.
  
 ## Building and packaging
 To locally build a recipe, from within the recipe directory
