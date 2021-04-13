@@ -6,7 +6,7 @@ class NlohmannjsonConan(ConanFile):
     name = "nlohmann_json"
     version = "3.7.3"
     license = "MIT - https://github.com/nlohmann/json/blob/develop/LICENSE.MIT"
-    url = "https://github.com/thalmic/conan-recipes"
+    url = "https://github.com/nlohmann/json"
     description = "JSON for Modern C++"
     short_paths = True
 
