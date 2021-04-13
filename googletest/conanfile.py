@@ -6,7 +6,7 @@ class GoogletestConan(ConanFile):
     name = "googletest"
     version = "1.8.1"
     license = "3-Clause BSD License - https://github.com/google/googletest/blob/master/LICENSE"
-    url = "https://github.com/thalmic/conan-recipes"
+    url = "https://github.com/google/googletest"
     description = "Google's C++ testing and mocking framework"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
