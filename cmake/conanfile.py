@@ -4,14 +4,14 @@ from typing import Tuple
 from conans import ConanFile, tools
 
 
-class CMakeInstaller(ConanFile):
-    name = "cmake_installer"
+class CMake(ConanFile):
+    name = "cmake"
     version = "3.14.3"
     license = "OSI-approved BSD 3-clause"
     url = "https://cmake.org/"
     settings = "os", "arch"
     build_policy = "missing"
-    description = "CMake installer, build, test, and packaging tools."
+    description = "CMake build, test, and packaging tools."
 
     @property
     def cmake_folder(self) -> str:
@@ -46,7 +46,7 @@ class CMakeInstaller(ConanFile):
     def build(self):
         url, hash = self.cmake_download_package
 
-        self.output.warn(f"Downloading '{url}'...")
+        self.output.info(f"Downloading '{url}'...")
         tools.get(url, sha256=hash, keep_permissions=True)
 
     def package(self):
@@ -56,5 +56,6 @@ class CMakeInstaller(ConanFile):
             self.copy("*", dst="", src=self.cmake_folder)
 
     def package_info(self):
+        # Add cmake to the virtual env path
         self.env_info.path.append(os.path.join(self.package_folder, "bin"))
 

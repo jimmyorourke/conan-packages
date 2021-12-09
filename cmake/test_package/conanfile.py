@@ -1,12 +1,9 @@
 from conans import CMake, ConanFile
 import os
 
-channel = "testing"
-username = "demo"
-
 class CMakeTest(ConanFile):
     name = "CMakeTest"
-    requires = "cmake_installer/3.14.3@{}/{}".format(username, channel)
+    requires = "cmake/3.14.3"
 
     settings = "os", "arch"
 
