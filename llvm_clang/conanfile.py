@@ -1,20 +1,20 @@
 import os
-from typing import Tuple
+from typing import Optional, Tuple
 
 from conans import ConanFile, tools
 
 class ClangConan(ConanFile):
     name = "llvm_clang"
-    version = "8.0.0"
+    version = "13.0.0"
     license = "LLVM"
     url = "https://clang.llvm.org/"
     settings = "os", "arch"
     build_policy = "missing"
     description = "Clang compiler, LLD, libc++, compiler-rt, tools, etc."
-    short_paths = True
+    #short_paths = True
 
     # whether to export environment variables in the virtualenv
-    # currently only desired on Linux
+    # Probably only desired on Linux
     options = {"export_toolchain": [True, False]}
     default_options = {"export_toolchain": False}
 
@@ -23,23 +23,23 @@ class ClangConan(ConanFile):
         if self.settings.os == 'Macos':
             return f'clang+llvm-{self.version}-x86_64-apple-darwin'
         elif self.settings.os == 'Linux':
-            return f'clang+llvm-{self.version}-x86_64-linux-gnu-ubuntu-18.04'
+            return f'clang+llvm-{self.version}-x86_64-linux-gnu-ubuntu-20.04'
         elif self.settings.os == 'Windows':
             return f'LLVM-{self.version}-win64'
         else:
             raise Exception("Clang is only provided for Macos, Linux, and Windows!")
 
     @property
-    def clang_download_package(self) -> Tuple[str, str]:
+    def clang_download_package(self) -> Tuple[str, Optional[str]]:
         if self.settings.os == 'Macos':
-            return (f'http://releases.llvm.org/{self.version}/{self.clang_folder}.tar.xz',
-                    '94ebeb70f17b6384e052c47fef24a6d70d3d949ab27b6c83d4ab7b298278ad6f')
+            return (f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{self.version}/{self.clang_folder}.tar.xz',
+                    None)
         elif self.settings.os == 'Linux':
-            return (f'http://releases.llvm.org/{self.version}/{self.clang_folder}.tar.xz',
-                    '0f5c314f375ebd5c35b8c1d5e5b161d9efaeff0523bac287f8b4e5b751272f51')
+            return (f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{self.version}/{self.clang_folder}.tar.xz',
+                    '2c2fb857af97f41a5032e9ecadf7f78d3eff389a5cd3c9ec620d24f134ceb3c8')
         elif self.settings.os == 'Windows':
-            return (f'http://releases.llvm.org/{self.version}/{self.clang_folder}.exe',
-                    '56d582eed2d5def6accaedabbe11ae368186600798e2a6a7eb86a727fa7bb20c')
+            return (f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{self.version}/{self.clang_folder}.exe',
+                    None)
         else:
             raise Exception("Clang is only provided for Macos, Linux and Windows!")
 
@@ -51,10 +51,9 @@ class ClangConan(ConanFile):
     def build(self):
         url, hash = self.clang_download_package
 
-        self.output.warn(f"Downloading '{url}'...")
+        self.output.info(f"Downloading '{url}'...")
         temp_install_package = os.path.basename(url)
-        tools.download(url, temp_install_package)
-        tools.check_sha256(temp_install_package, hash)
+        tools.download(url, temp_install_package, sha256=hash)
 
         if self.settings.os == 'Windows':
             # An NSIS based installer is shipped for Windows
@@ -63,7 +62,7 @@ class ClangConan(ConanFile):
             self.run(f'{temp_install_package} /S /D={install_path}')
         else:
             tools.unzip(temp_install_package)
-        os.unlink(temp_install_package)
+        #os.unlink(temp_install_package)
 
     def package(self):
         self.copy('*', src=self.clang_folder, dst='', keep_path=True)
@@ -71,14 +70,12 @@ class ClangConan(ConanFile):
     def package_info(self):
         self.output.info(f"Using Clang {self.version}")
 
-        # Prep for using clang in a conan virtual env. When not using a virtualenv, ${CONAN_BIN_DIRS_LLVM_CLANG} and
-        # similar will be available in cmake
-        self.env_info.path.append(os.path.join(self.package_folder, 'bin'))
-        self.env_info.LLVM_DIR = self.package_folder
-
-        # We aren't ready to use this compiler on all platforms, so don't always let these variables get picked up by
-        # CMake
+        # Set environment variables for using clang in a conan virtual env. When not using a virtualenv,
+        # ${CONAN_BIN_DIRS_LLVM_CLANG} and similar will be available in cmake/
         if self.options.export_toolchain:
+            self.env_info.path.append(os.path.join(self.package_folder, 'bin'))
+            self.env_info.LLVM_DIR = self.package_folder
+
             self.env_info.CC = os.path.join(self.package_folder, 'bin', 'clang')
             self.env_info.CXX = os.path.join(self.package_folder, 'bin', 'clang++')
             # https://libcxx.llvm.org/docs/UsingLibcxx.html
