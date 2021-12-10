@@ -5,6 +5,7 @@ env:
     BPT_CONFIG_FILE_VERSION: "11"
 
 on:
+    workflow_dispatch:
     push:
         branches: ["main", "develop"]
     pull_request:
