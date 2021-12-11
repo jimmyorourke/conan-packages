@@ -23,7 +23,7 @@ class ClangConan(ConanFile):
         if self.settings.os == 'Macos':
             return f'clang+llvm-{self.version}-x86_64-apple-darwin'
         elif self.settings.os == 'Linux':
-            return f'clang+llvm-{self.version}-x86_64-linux-gnu-ubuntu-20.04'
+            return f'clang+llvm-{self.version}-x86_64-linux-gnu-ubuntu-16.04'
         elif self.settings.os == 'Windows':
             return f'LLVM-{self.version}-win64'
         else:
@@ -36,7 +36,7 @@ class ClangConan(ConanFile):
                     None)
         elif self.settings.os == 'Linux':
             return (f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{self.version}/{self.clang_folder}.tar.xz',
-                    '2c2fb857af97f41a5032e9ecadf7f78d3eff389a5cd3c9ec620d24f134ceb3c8')
+                    '76d0bf002ede7a893f69d9ad2c4e101d15a8f4186fbfe24e74856c8449acd7c1')
         elif self.settings.os == 'Windows':
             return (f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{self.version}/{self.clang_folder}.exe',
                     None)
